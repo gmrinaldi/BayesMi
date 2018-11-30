@@ -19,7 +19,7 @@ transformed parameters  {
   real lmu[M,M]; // linear predictor
   for (i in 1:M) {
     for(j in 1:M)
-      lmu[i,j] <- beta0 + beta1*log(d[i,j]+10); // linear predictor
+      lmu[i,j] = beta0 + beta1*log(d[i,j]+10); // linear predictor
     }
 }
 
