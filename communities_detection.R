@@ -25,11 +25,16 @@ library(RColorBrewer)
 for (ep in seq(from=0.001, by=0.001, to=0.01)){
   for(mp in 2:5){
     cluster<-dbscan(latlong[,1:2], eps=ep, minPts = mp)
+    print(paste("cluster" ,length(unique(cluster$cluster))))
+    print(ep)
+    print(mp)
+    if(length(unique(cluster$cluster))>10){
     x11()
-    plot(latlong[,1], latlong[,2], pch=cluster$cluster+1, xlab = 'longitude', ylab = 'latitude',
+    plot(latlong[,2], latlong[,1], pch=cluster$cluster, xlab = 'longitude', ylab = 'latitude',
          main=paste('epsilon=',ep, ' MinPoints=', mp), 
-         col=rainbow(100)[latlong$nil+10], xlim=c(45.44 , 45.6), ylim = c(9.05, 9.275))
-    legend(45.55, 9.27, legend =unique(latlong$nilname), cex = 0.5 ,  col=rainbow(100)[unique(latlong$nil)+10], pch = 16 )
+         col=rainbow(100)[latlong$nil+10], ylim=c(45.44 , 45.6), xlim = c(9.05, 9.275))
+    legend( 9.27,45.55, legend =unique(latlong$nilname), cex = 0.5 ,  col=rainbow(100)[unique(latlong$nil)+10], pch = 16 )
+    }
   }
 }
 
