@@ -32,13 +32,13 @@ for (i in 1:M){
     A[i,j]<-(T[j]/(d[i,j]+csi)^eta)/somme[i]
   }
 }
-A
 
+library(rstan)
 dat <- list(y=adj, d=d, M=M , S=S, T=T, A=A)
 
 options(mc.cores = parallel::detectCores())
 fit.1 <- stan(file = 'modello3_distanza_s_t_a_db67.stan',data = dat, chains = 4, verbose = TRUE,
-              iter = 2000)
+              iter = 10000,control=list(max_treedepth=15),save_warmup=F)
 print(fit.1)
 
 traceplot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4"))
