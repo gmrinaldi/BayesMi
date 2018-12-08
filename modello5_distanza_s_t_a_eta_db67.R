@@ -2,7 +2,24 @@ adj<-read.table("diag_flow_matrix_db67.txt",header=T)
 d<-read.table("distanze_db.txt",header=T)
 
 centro<-c(1,2,3,4,7,8,9,10,11,14,21,22,24)+1000
+dbnames<-rownames(adj)
 
+CCmatr<-matrix(rep(0,67^2),67,67)
+for (i in 1:67){
+  for (j in 1:67){
+    CCmatr[i,j]<-dbnames[i]%in%centro && dbnames[j] %in% centro
+  }
+}
+
+CPmatr<-matrix(rep(0,67^2),67,67)
+for (i in 1:67){
+  for (j in 1:67){
+    CCmatr[i,j]<-dbnames[i]%in%centro && !(dbnames[j] %in% centro)
+  }
+}
+
+PCmatr<-t(CPmatr)
+autoarchi<-diag(67)
 
 library(igraph)
 
@@ -46,17 +63,17 @@ for (i in 1:M){
 }
 
 library(rstan)
-dat <- list(y=adj, d=d, M=M , S=S, T=T, A=A)
+dat <- list(y=adj, d=d, M=M , S=S, T=T, CC=CCmatr,CP=CPmatr,PC=PCmatr,Auto=autoarchi)
 
 options(mc.cores = parallel::detectCores())
-fit.1 <- stan(file = 'modello3_distanza_s_t_a_db67.stan',data = dat, chains = 4, verbose = TRUE,
-              iter = 5000,control=list(max_treedepth=15),save_warmup=F)
+fit.1 <- stan(file = 'modello5_distanza_s_t_hier_db67.stan',data = dat, chains = 4, verbose = TRUE,
+              iter = 2000,control=list(max_treedepth=15),save_warmup=F)
 print(fit.1)
 
-traceplot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4"))
-plot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4"))
-stan_hist(fit.1, pars=c("beta0","beta1","beta2","beta3","beta4"),bins=50)
-stan_ac(fit.1,par=c("beta0","beta1","beta2","beta3","beta4")) #canceled from stan code
+traceplot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5","beta6","beta7"))
+plot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5","beta6","beta7"))
+stan_hist(fit.1, pars=c("beta0","beta1","beta2","beta3","beta4","beta5","beta6","beta7"),bins=50)
+stan_ac(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5","beta6","beta7")) #canceled from stan code
 chains.1 <- rstan::extract(fit.1, permuted = TRUE)
 mu.1 <- exp(chains.1$lmu)
 #
