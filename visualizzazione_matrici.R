@@ -1,6 +1,7 @@
 chains <- rstan::extract(fit.1, permuted = TRUE)
 ypred1<-chains$ypred[1,,]
 ypred2<-chains$ypred[4000,,]
+ymean<-0
 
 for (i in 1:4000)
   ymean<-ymean+chains$ypred[i,,]
