@@ -1,10 +1,13 @@
 chains <- rstan::extract(fit.1, permuted = TRUE)
+N<-dim(chains$ypred)[1]
 ypred1<-chains$ypred[1,,]
-ypred2<-chains$ypred[4000,,]
+ypred2<-chains$ypred[N,,]
 
-for (i in 1:4000)
+ymean=0
+
+for (i in 1:N)
   ymean<-ymean+chains$ypred[i,,]
-ymean<-ymean/4000
+ymean<-ymean/N
 
 Y<-adj
 colnames(ypred1)<-colnames(Y)

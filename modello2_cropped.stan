@@ -20,17 +20,15 @@ parameters {
 }
 
 transformed parameters  {
-  real lmu[M,3]; // linear predictor
+  real lmu[M]; // linear predictor
   for (i in 1:M) {
-      lmu[i,1] = y[i,1];
-      lmu[i,2] = y[i,2];
       lmu[i,3] = beta0 + beta1*log(d[y[i,1],y[i,2]]+10)+ beta2*log(S[y[i,1]]) + beta3*log(T[y[i,2]]); // linear predictor
     }
 }
 
 model {
 for (i in 1:M) {
-        y[i,3] ~ poisson_log(lmu[i,3]);
+        y[i,3] ~ poisson_log(lmu[i]);
     }
 beta0 ~ normal(0,10^2);
 beta1 ~ normal(0,10^2);
@@ -41,10 +39,8 @@ beta3 ~ normal(0,10^2);
 }
 
 generated quantities {
-int<lower=0> ypred[M,3];// predictions at imputed m[i]'s
+int<lower=0> ypred[M];// predictions at imputed m[i]'s
 for (i in 1:M){
-    ypred[i,1] = y[i,1];
-    ypred[i,2] = y[i,2];
-    ypred[i,3] = poisson_log_rng(lmu[i,3]);
+    ypred[i] = poisson_log_rng(lmu[i]);
   }
 }
