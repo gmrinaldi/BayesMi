@@ -1,5 +1,6 @@
 data<-read.table("databikemi_db.txt", header = T)
 head(data)
+Y_tot<-read.table("diag_flow_matrix_db67.txt",header=T)
 
 attach(data)
 adj_mattina<-matrix(rep(0,67^2),67,67)
@@ -20,7 +21,7 @@ for (i in 1:length(inizio_db)){
   }
 }
 
-adj<-adj_mattina #da cambiare se vuoi pomeriggio
+adj<-adj_pomeriggio #da cambiare se vuoi pomeriggio
 
 rownames(adj)<-dbnames
 colnames(adj)<-dbnames
@@ -70,7 +71,7 @@ print(fit.1)
 traceplot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5"))
 plot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5"))
 stan_hist(fit.1, pars=c("beta0","beta1","beta2","beta3","beta4","beta5"),bins=50)
-stan_ac(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5","beta6","beta7")) #canceled from stan code
+stan_ac(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5")) #canceled from stan code
 chains.1 <- rstan::extract(fit.1, permuted = TRUE)
 mu.1 <- exp(chains.1$lmu)
 #
