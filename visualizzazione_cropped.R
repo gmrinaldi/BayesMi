@@ -20,13 +20,13 @@ ypred2<-matrix(rep(0,263^2),263,263)
 ymean<-matrix(rep(0,263^2),263,263)
 
 for (i in 1:dim(cropped_flows)[1]){
-  ypred1[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ypred1_[i,3]
+  ypred1[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ypred1_[i]
 }
 for (i in 1:dim(cropped_flows)[1]){
-  ypred2[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ypred2_[i,3]
+  ypred2[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ypred2_[i]
 }
 for (i in 1:dim(cropped_flows)[1]){
-  ymean[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ymean_[i,3]
+  ymean[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ymean_[i]
 }
 
 # colnames(ypred1)<-colnames(Y)

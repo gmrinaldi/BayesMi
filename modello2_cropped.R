@@ -27,7 +27,7 @@ cropped_flows<-full_flows%>%filter(Flow>=15)
 
 Sourcity<-full_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
   .$Sourcity
-Targettosity<-cropped_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
+Targettosity<-full_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
  .$Targettosity
 
 # Modello con Stan 
