@@ -1,13 +1,13 @@
 chains <- rstan::extract(fit.1, permuted = TRUE)
 N<-dim(chains$ypred)[1]
-ypred1_<-chains$ypred[1,,]
-ypred2_<-chains$ypred[N,,]
+ypred1_<-chains$ypred[1,]
+ypred2_<-chains$ypred[N,]
 
 ymean_<-ypred1_
 
 for (i in 2:N)
-  ymean_[,3]<-ymean_[,3]+chains$ypred[i,,3]
-ymean_[,3]<-ymean_[,3]/N
+  ymean_<-ymean_+chains$ypred[i,]
+ymean_<-ymean_/N
 
 Y<-matrix(rep(0,263^2),263,263)
 for (i in 1:dim(cropped_flows)[1]){
@@ -20,13 +20,13 @@ ypred2<-matrix(rep(0,263^2),263,263)
 ymean<-matrix(rep(0,263^2),263,263)
 
 for (i in 1:dim(cropped_flows)[1]){
-  ypred1[ypred1_[i,1],ypred1_[i,2]]<-ypred1_[i,3]
+  ypred1[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ypred1_[i,3]
 }
 for (i in 1:dim(cropped_flows)[1]){
-  ypred2[ypred2_[i,1],ypred2_[i,2]]<-ypred2_[i,3]
+  ypred2[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ypred2_[i,3]
 }
 for (i in 1:dim(cropped_flows)[1]){
-  ymean[ymean_[i,1],ymean_[i,2]]<-ymean_[i,3]
+  ymean[cropped_flows$id_inizio[i],cropped_flows$id_fine[i]]<-ymean_[i,3]
 }
 
 # colnames(ypred1)<-colnames(Y)

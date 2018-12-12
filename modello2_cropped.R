@@ -19,10 +19,16 @@ full_flows<-left_join(full,flows)%>%left_join(lookUp,by=c("NumeroStzInizio"="nam
 full_flows$Flow[is.na(full_flows$Flow)]<-0
 
 cropped_flows<-full_flows%>%filter(Flow>=15)
-Sourcity<-cropped_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
-  add_row(id_inizio=256, Sourcity=0,.before=256)%>%add_row(id_inizio=259,Sourcity=0,.before=259)%>%.$Sourcity
+
+# Sourcity<-cropped_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
+#   add_row(id_inizio=256, Sourcity=0,.before=256)%>%add_row(id_inizio=259,Sourcity=0,.before=259)%>%.$Sourcity
+# Targettosity<-cropped_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
+#   add_row(id_fine=259,Targettosity=0,.before=259)%>%.$Targettosity
+
+Sourcity<-full_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
+  .$Sourcity
 Targettosity<-cropped_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
-  add_row(id_fine=259,Targettosity=0,.before=259)%>%.$Targettosity
+ .$Targettosity
 
 # Modello con Stan 
 library(rstan)

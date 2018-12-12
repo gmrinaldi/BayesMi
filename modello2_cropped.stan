@@ -22,7 +22,7 @@ parameters {
 transformed parameters  {
   real lmu[M]; // linear predictor
   for (i in 1:M) {
-      lmu[i,3] = beta0 + beta1*log(d[y[i,1],y[i,2]]+10)+ beta2*log(S[y[i,1]]) + beta3*log(T[y[i,2]]); // linear predictor
+      lmu[i] = beta0 + beta1*log(d[y[i,1],y[i,2]]+10)+ beta2*log(S[y[i,1]]) + beta3*log(T[y[i,2]]); // linear predictor
     }
 }
 
