@@ -7,12 +7,6 @@ library(lubridate)
 #come deciso: mattina dalle 8 alle 9 am
 #pomeriggio dalle 5 alle 7 pm
 
-#leggere data e ora
-prova<-data$DataOraInizio[1]
-ora<-as.POSIXct(prova, format = '%d/%m/%Y %H:%M') #funziona
-
-
-
 attach(data)
 adj_mattina<-matrix(rep(0,67^2),67,67)
 adj_pomeriggio<-matrix(rep(0,67^2),67,67)
