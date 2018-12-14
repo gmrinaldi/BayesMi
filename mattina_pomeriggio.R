@@ -2,6 +2,17 @@ data<-read.table("databikemi_db.txt", header = T)
 head(data)
 Y_tot<-read.table("diag_flow_matrix_db67.txt",header=T)
 
+library(lubridate)
+
+#come deciso: mattina dalle 8 alle 9 am
+#pomeriggio dalle 5 alle 7 pm
+
+#leggere data e ora
+prova<-data$DataOraInizio[1]
+ora<-as.POSIXct(prova, format = '%d/%m/%Y %H:%M') #funziona
+
+
+
 attach(data)
 adj_mattina<-matrix(rep(0,67^2),67,67)
 adj_pomeriggio<-matrix(rep(0,67^2),67,67)
@@ -10,18 +21,22 @@ dbnames<-dbnames_ordered
 
 #consideriamo solo partenza
 
+dayhour<-as.POSIXct(data$DataOraInizio, format = '%d/%m/%Y %H:%M')
+#nota: ora posso usare le funzioni hour(), day(), minute()... 
+
 for (i in 1:length(inizio_db)){
-  idi<-dbnames==inizio_db[i]
-  idj<-dbnames==fine_db[i]
-  if(grepl("a", as.character(Hour1[i]))){
+  idi<-dbnames==inizio_db[i] #punto di partenza
+  idj<-dbnames==fine_db[i] #punto di arrivo
+  if(hour(dayhour[i])==8 || hour(dayhour[i])==9){ #se il viaggio è stato fatto tra le 8 e le 9
     adj_mattina[idi,idj]<-adj_mattina[idi,idj]+1
   }
-  else{
+  # se è fatto tra le 17 e le 19
+  if(hour(dayhour[i])>=17 && hour(dayhour[i])<=19){
     adj_pomeriggio[idi,idj]<-adj_pomeriggio[idi,idj]+1
   }
 }
 
-adj<-adj_pomeriggio #da cambiare se vuoi pomeriggio
+adj<-adj_mattina #da cambiare se vuoi pomeriggio
 
 rownames(adj)<-dbnames
 colnames(adj)<-dbnames
@@ -83,4 +98,4 @@ LPML.1 <- sum(log(CPO.1))
 print(LPML.1)
 
 
-detach(bike_NIL_NewDay)
+detach(data)
