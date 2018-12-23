@@ -36,24 +36,33 @@ library(rstan)
 # M<-6752
 M<-67^2;
   
-dat <- list(y=full_flows%>%select(id_inizio,id_fine,Flow), n_groups=2, d=d, M=M,S=Sourcity,T=Targettosity)
+dat <- list(y=full_flows%>%select(id_inizio,id_fine,Flow), n_groups=4, d=d, M=M,S=Sourcity,T=Targettosity)
 
 options(mc.cores = parallel::detectCores())
-# fit.1 <- stan(file = 'esperimento.stan',control=list(max_treedepth=15),data = dat, iter=2000, save_warmup=F)
-fit.2<- stan(file = 'esperimento.stan',control=list(max_treedepth=15),data = dat, iter=2000, save_warmup=F)
 
-print(fit.1)
+# fit.1 <- stan(file = 'esperimento/esperimento4.stan',control=list(max_treedepth=15),data = dat, iter=3000, save_warmup=F, refresh=100)
 
-traceplot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5","lambda","theta"))
-plot(fit.1,par=c("beta0","beta1","beta2","beta3","beta4","beta5","lambda","theta"))
-stan_hist(fit.1, pars=c("beta0","beta1","beta2","beta3","beta4","beta5","lambda","theta"),bins=50)
+# fit.2<- stan(file = 'esperimento.stan',control=list(max_treedepth=15),data = dat, iter=2000, save_warmup=F)
 
-print(fit.2,par=c("beta0","lambda"))
+fit.3 <- stan(file = 'esperimento/esperimento5.stan',data = dat, iter=10000, save_warmup=F)
+
+print(fit.1,par=c("beta0","beta1","gamma0","gamma1","gamma2"))
+
+traceplot(fit.1,par=c("beta0","beta1","gamma0","gamma1","gamma2"))
+stan_plot(fit.1,par=c("beta0","beta1","gamma0","gamma1","gamma2"))
+stan_hist(fit.1, pars=c("beta0","beta1","gamma0","gamma1","gamma2"),bins=50)
+
+print(fit.2,par=c("beta0"))
 
 traceplot(fit.2,par=c("beta0","lambda"))
 plot(fit.2,par=c("beta0","lambda"))
 stan_hist(fit.2, pars=c("beta0","lambda"),bins=50)
 
 
+print(fit.3,par=c("beta0"))
+
+traceplot(fit.3,par=c("beta0","lambda"))
+plot(fit.3,par=c("beta0","lambda"))
+stan_hist(fit.3, pars=c("beta0","lambda","theta"),bins=50)
 
 

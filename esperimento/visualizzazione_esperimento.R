@@ -1,4 +1,30 @@
-chains <- rstan::extract(fit.2, permuted = F)
+perm=TRUE
+if(perm==TRUE){
+chains <- rstan::extract(fit.3, permuted = TRUE)
+N<-dim(chains$ypred)[1]
+ypred1_<-chains$ypred[1,]
+ypred2_<-chains$ypred[N,]
+
+ymean_<-ypred1_
+
+for (i in 2:N)
+  ymean_<-ymean_+chains$ypred[i,]
+ymean_<-ymean_/N
+
+Y<-matrix(rep(0,67^2),67,67)
+ypred1<-matrix(rep(0,67^2),67,67)
+ypred2<-matrix(rep(0,67^2),67,67)
+ymean<-matrix(rep(0,67^2),67,67)
+
+for (i in 1:dim(full_flows)[1]){
+  Y[full_flows$id_inizio[i],full_flows$id_fine[i]]<-full_flows$Flow[i]
+  ypred1[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ypred1_[i]
+  ypred2[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ypred2_[i]
+  ymean[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ymean_[i]
+}
+
+} else{
+chains <- rstan::extract(fit.3, permuted = FALSE)
 N<-dim(chains)[1]*dim(chains)[2]
 ind_beg<-which(dimnames(chains)$parameters=="ypred[1]")
 ind_end<-which(dimnames(chains)$parameters=="ypred[4489]")
@@ -26,7 +52,7 @@ for (i in 1:dim(full_flows)[1]){
   ymean[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ymean_[i]
   Y[full_flows$id_inizio[i],full_flows$id_fine[i]]<-full_flows$Flow[i]
 }
-
+}
 # colnames(ypred1)<-colnames(Y)
 # colnames(ypred2)<-colnames(Y)
 # colnames(ymean)<-colnames(Y)
