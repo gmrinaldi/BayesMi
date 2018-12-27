@@ -23,6 +23,7 @@ range(ymean)
 mean(colMeans(Y))
 mean(colMeans(ypred1))
 
+Y_tot<-Y#############
 #heatmap(as.matrix(adj), keep.dendro=F,Rowv=F, Colv=F)
 x11(width=100,height=30)
 par(mfrow=c(1,4))
@@ -35,3 +36,7 @@ image(as.matrix(log(abs(adj_mattina-adj_pomeriggio)+1)), main='differenza', col 
 
 range(ymean)
 range(ymean2)
+
+diag<-NULL
+for (i in 1:67)
+  diag[i]<-Y[i,i]
