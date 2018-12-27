@@ -32,7 +32,7 @@ for (i in 1:length(inizio_db)){
 
 
 x11()
-image(as.matrix(log(abs(adj_mattina-adj_pomeriggio)+1)), main='differenza', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y_tot+1)),max(log(Y_tot)),length.out=201) )
+image(as.matrix(log(abs(adj_mattina-adj_pomeriggio)+1)), main='Observed difference', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y_tot+1)),max(log(Y_tot)),length.out=201) )
 #salva l'immagine
 
 
@@ -52,6 +52,7 @@ for (i in 1:N)
 ymean<-ymean/N
 
 Y<-adj
+#Y<-adj_mattina######################mettici pomeriggio o adj
 colnames(ypred1)<-colnames(Y)
 colnames(ypred2)<-colnames(Y)
 colnames(ymean)<-colnames(Y)
