@@ -2,8 +2,8 @@ data<-read.table("databikemi_db.txt", header = T)
 head(data)
 
 attach(data)
-adj_mattina<-matrix(rep(0,67^2),67,67)
-adj_pomeriggio<-matrix(rep(0,67^2),67,67)
+adj_weekday<-matrix(rep(0,67^2),67,67)
+adj_weekend<-matrix(rep(0,67^2),67,67)
 load("dbnames_ordered.txt")
 dbnames<-dbnames_ordered
 
