@@ -29,7 +29,7 @@ for (i in 1:length(inizio_db)){
   }
 }
 
-adj<-adj_pomeriggio #da cambiare se vuoi pomeriggio
+adj<-adj_sole #da cambiare se vuoi pomeriggio
 
 rownames(adj)<-dbnames
 colnames(adj)<-dbnames

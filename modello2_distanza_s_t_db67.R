@@ -1,9 +1,9 @@
-adj<-read.table("flow_matrix_db67.txt",header=T)
+adj<-read.table("diag_flow_matrix_db67.txt",header=T)
 d<-read.table("distanze_db.txt",header=T)
 
 library(igraph)
 
-graph<-graph_from_adjacency_matrix(as.matrix(adj), mode = c("directed"), diag = FALSE,
+graph<-graph_from_adjacency_matrix(as.matrix(adj), mode = c("directed"), diag = TRUE,
                                    add.colnames = NULL, add.rownames = NA)
 
 S<-degree(graph, v = V(graph), mode = c("out"),
