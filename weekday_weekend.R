@@ -20,7 +20,7 @@ for (i in 1:length(inizio_db)){
   }
 }
 
-adj<-adj_weekday #da cambiare se vuoi weekend
+adj<-adj_weekend #da cambiare se vuoi weekend
 
 rownames(adj)<-dbnames
 colnames(adj)<-dbnames
