@@ -1,0 +1,27 @@
+RANGE WEEKDAY:
+> range(Y)
+[1]     0 37488
+> range(ypred1)
+[1]     0 42183
+> range(ypred2)
+[1]     0 41846
+> range(ymean)
+[1]     0.00 41994.45
+> mean(colMeans(Y))
+[1] 69.86434
+> mean(colMeans(ypred1))
+[1] 69.84919
+
+RANGE WEEKEND
+> range(Y)
+[1]    0 4370
+> range(ypred1)
+[1]    0 5080
+> range(ypred2)
+[1]    0 5259
+> range(ymean)
+[1]    0.00025 5089.88425
+> mean(colMeans(Y))
+[1] 8.124749
+> mean(colMeans(ypred1))
+[1] 8.065271

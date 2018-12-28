@@ -1,9 +1,9 @@
-adj<-read.table("flow_matrix_db67.txt",header=T)
+adj<-read.table("diag_flow_matrix_db67.txt",header=T)
 d<-read.table("distanze_db.txt",header=T)
 
 library(igraph)
 
-graph<-graph_from_adjacency_matrix(as.matrix(adj), mode = c("directed"), diag = FALSE,
+graph<-graph_from_adjacency_matrix(as.matrix(adj), mode = c("directed"), diag = TRUE,
                                    add.colnames = NULL, add.rownames = NA)
 
 S<-degree(graph, v = V(graph), mode = c("out"),
@@ -22,7 +22,7 @@ dat <- list(y=adj, d=d, M=M , S=S, T=T)
 
 options(mc.cores = parallel::detectCores())
 fit.1 <- stan(file = 'modello2_distanza_s_t_db67.stan',data = dat, chains = 4, verbose = TRUE,
-              iter = 5000)
+              iter=5000, save_warmup=F)
 print(fit.1)
 
 traceplot(fit.1,par=c("beta0","beta1","beta2","beta3"))

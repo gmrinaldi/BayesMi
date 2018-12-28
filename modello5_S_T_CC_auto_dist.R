@@ -1,33 +1,8 @@
-data<-read.table("databikemi_db.txt", header = T)
-head(data)
-
-attach(data)
-adj_weekday<-matrix(rep(0,67^2),67,67)
-adj_weekend<-matrix(rep(0,67^2),67,67)
-load("dbnames_ordered.txt")
-dbnames<-dbnames_ordered
-
-#consideriamo solo partenza
-
-for (i in 1:length(inizio_db)){
-  idi<-dbnames==inizio_db[i]
-  idj<-dbnames==fine_db[i]
-  if(DayOfTheWeek[i]<6){
-    adj_weekday[idi,idj]<-adj_weekday[idi,idj]+1
-  }
-  else{
-    adj_weekend[idi,idj]<-adj_weekend[idi,idj]+1
-  }
-}
-
-adj<-adj_weekend #da cambiare se vuoi weekend
-
-rownames(adj)<-dbnames
-colnames(adj)<-dbnames
-
+adj<-read.table("diag_flow_matrix_db67.txt",header=T)
 d<-read.table("distanze_db.txt",header=T)
 
 centro<-c(1,2,3,4,7,8,9,10,11,14,21,22,24)+1000
+dbnames<-rownames(adj)
 
 CCmatr<-matrix(rep(0,67^2),67,67)
 for (i in 1:67){
@@ -60,10 +35,10 @@ centro<-centro%>%as.numeric()
 
 
 library(rstan)
-dat <- list(y=adj, d=d, M=M , S=S, T=T, CC=CCmatr, Auto=autoarchi)
+dat <- list(y=adj, d=d, M=M , S=S, T=T, CC=CCmatr,Auto=autoarchi)
 
 options(mc.cores = parallel::detectCores())
-fit.1 <- stan(file = 'modello5_mattina_pomeriggio.stan',data = dat, chains = 4, verbose = TRUE,
+fit.1 <- stan(file = 'modello5_distanza_s_t_CC_auto_db67.stan',data = dat, chains = 4, verbose = TRUE,
               iter = 2000,control=list(max_treedepth=15),save_warmup=F)
 print(fit.1)
 
@@ -80,6 +55,3 @@ CPO.1 <- matrix(0,nrow=M,ncol=M)
 for (j in 1:M) for (i in 1:M) CPO.1[j,i] <- 1/mean(1/dpois(adj[j,i],lambda=mu.1[,j,i]))
 LPML.1 <- sum(log(CPO.1))
 print(LPML.1)
-
-
-detach(bike_NIL_NewDay)

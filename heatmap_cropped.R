@@ -13,6 +13,7 @@ par(mfrow=c(1,4))
 hm<-heatmap(as.matrix(Y),col=rev(heat.colors(10)),Colv="Rowv",symm=T,breaks=c(0,15,16,17,18,19,20,40,80,150,max(Y)))
 permutation<-hm$rowInd
 #permuto le predette come è stata permutata la reale
+heatmap(as.matrix(Y[permutation,permutation]),col=rev(heat.colors(10)),Colv=NA,Rowv=NA,symm=T,breaks=c(0,15,16,17,18,19,20,40,80,150,max(Y)))
 heatmap(as.matrix(ypred1[permutation,permutation]),col=rev(heat.colors(10)),Colv=NA,Rowv=NA,symm=T,breaks=c(0,15,16,17,18,19,20,40,80,150,max(Y)))
 heatmap(as.matrix(ypred2[permutation,permutation]),col=rev(heat.colors(10)),Colv=NA,Rowv=NA,symm=T,breaks=c(0,15,16,17,18,19,20,40,80,150,max(Y)))
 heatmap(as.matrix(ymean[permutation,permutation]),col=rev(heat.colors(10)),Colv=NA,Rowv=NA,symm=T,breaks=c(0,15,16,17,18,19,20,40,80,150,max(Y)))
