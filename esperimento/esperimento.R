@@ -44,7 +44,7 @@ options(mc.cores = parallel::detectCores())
 
 # fit.2<- stan(file = 'esperimento.stan',control=list(max_treedepth=15),data = dat, iter=2000, save_warmup=F)
 
-fit.3 <- stan(file = 'esperimento/esperimento5.stan',data = dat, iter=10000, save_warmup=F)
+fit.3 <- stan(file = 'esperimento/esperimento7.stan',data = dat, iter=50000, save_warmup=F)
 
 print(fit.1,par=c("beta0","beta1","gamma0","gamma1","gamma2"))
 

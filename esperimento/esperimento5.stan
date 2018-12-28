@@ -60,7 +60,6 @@ generated quantities {
     if(zero==0){
       z[i] = categorical_rng(softmax(prob_z));
       ypred[i] = poisson_log_rng(beta0[z[i]]);
-    } else { z[i]=0; ypred[i]=0;
-    }
+    } else {z[i]=0; ypred[i]=0;}
   }
 }
