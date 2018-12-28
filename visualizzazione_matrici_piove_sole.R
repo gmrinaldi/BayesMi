@@ -28,11 +28,11 @@ for (i in 1:length(inizio_db)){
     }
   }
 }
-}
+
 
 
 x11()
-image(as.matrix(log(abs(adj_piove-adj_sole)+1)), main='differenza', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y_tot+1)),max(log(Y_tot)),length.out=201) )
+image(as.matrix(log(abs(adj_piove-adj_sole)+1)), main='Observed difference', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y_tot+1)),max(log(Y_tot)),length.out=201) )
 #salva l'immagine
 
 

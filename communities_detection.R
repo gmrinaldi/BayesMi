@@ -33,8 +33,8 @@ for (ep in seq(from=0.001, by=0.001, to=0.01)){
       x11()
       plot(latlong[,2], latlong[,1], pch=cluster$cluster, xlab = 'longitude', ylab = 'latitude',
            main=paste('epsilon=',ep, ' MinPoints=', mp), 
-           col=rainbow(100)[latlong$nil+10], ylim=c(45.44 , 45.6), xlim = c(9.05, 9.275))
-      legend( 9.27,45.55, legend =unique(latlong$nilname), cex = 0.5 ,  col=rainbow(100)[unique(latlong$nil)+10], pch = 16 )
+           col=rainbow(100)[latlong$nil+10], ylim=c(45.44 , 45.537), xlim = c(9.08, 9.3))
+      legend( 9.25,45.53, legend =unique(latlong$nilname), cex = 0.5 ,  col=rainbow(100)[unique(latlong$nil)+10], pch = 16 )
     }
   }
 }

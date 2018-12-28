@@ -1,0 +1,252 @@
+\documentclass[pdf]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[english,italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{multicol}
+
+\usetheme{Berlin}
+\useoutertheme{miniframes}
+\useinnertheme{circles}
+%\definecolor{myblue}{RGB}{31,78,121}%scuro
+%\definecolor{myblue}{RGB}{46,117,182}%chiaro
+
+\definecolor{myred}{RGB}{226,2,26}
+\definecolor{myredara}{RGB}{231,56,15}
+\definecolor{myara}{RGB}{236,119,3}
+\definecolor{myarayel}{RGB}{245,155,2}
+\definecolor{myyel}{RGB}{255,192,0}
+
+%\usecolortheme[named=myara]{structure}
+%\usecolortheme[named=myblue]{structure}
+
+\setbeamercolor*{palette primary}{bg=myred, fg = myarayel}
+\setbeamercolor*{palette secondary}{bg=myredara, fg = myyel}
+\setbeamercolor*{palette tertiary}{bg=myara, fg = white}
+\setbeamercolor*{palette quaternary}{bg=myarayel, fg = myred}
+\setbeamercolor{titlelike}{parent=structure,fg=white,bg=myara}
+
+\usefonttheme{professionalfonts} 
+\setbeamertemplate{itemize item}{\color{myara}$\blacksquare$}
+\setbeamertemplate{itemize subitem}{\color{myarayel}$\blacktriangleright$}
+
+\title{Bayesian analysis of flow data on a network}
+\subtitle{An application to bike sharing data in Milan}
+\author{Bissoli, Principi, Rinaldi}
+\date{January 2019}
+\begin{document}
+	
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\section{Data}
+
+\begin{frame}{Flow model}
+Let $E$ be the set of arcs.\\[0.2cm]
+For any $(i,j) \in E$
+\[Y_{ij} \sim Poisson(\mu_{ij})\]
+\[\log(\mu_{ij}) = \beta_0 + \mathbf{\beta} \log(\mathbf{X}_{ij})\]
+where  $\mathbf{\beta}=(\beta_1,...,\beta_p)$ and $\mathbf{X}_{ij}=(X_{ij1},...,X_{ijp})$
+    
+\end{frame}
+
+\begin{frame}{Preliminary issues}
+\begin{minipage}{0.45\textwidth}
+Positioning problem:\\[0.1cm] real positions of the stations\\[0.5cm]
+Complexity problem:\\[0.1cm] too much stations
+\end{minipage}
+~
+\begin{minipage}{0.45\textwidth}
+    \begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"staz263disordinate"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+    \end{figure}
+\end{minipage}
+
+\end{frame}
+
+\begin{frame}{Localization of the stations}
+\centering Positioning solution:\\[0.1cm]
+\begin{figure}
+	\centering
+	\includegraphics[width=0.6\linewidth]{"staz263ordinate"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Cropping vs Clustering}
+\centering Complexity solutions:\\[0.2cm]
+\begin{minipage}{0.475\textwidth}
+	\centering cropping arcs with <10 trips\\[0.1cm]
+	\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"staz263filtrate"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\end{minipage}
+~
+\begin{minipage}{0.475\textwidth}
+	\centering dbscan clustering of stations
+	\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"dbscan"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\end{minipage}
+
+\end{frame}
+
+
+\section{Flow models on cropped network}
+
+\begin{frame}{Distance model on cropped network}
+Let $E$ be the set of arcs with more than 10 trips.\\[0.2cm]
+For any $(i,j) \in E$
+\[Y_{ij} \sim Poisson(\mu_{ij})\]
+\[\log(\mu_{ij}) = \beta_0 + \beta_1 \log(d_{ij}+10)\]
+where $d_{ij}$ is the distance between the nodes computed using latitude and longitude
+\end{frame}
+
+\begin{frame}{Distance and degrees model on cropped network}
+Let $E$ be the set of arcs with more than 10 trips.\\[0.2cm]
+For any $(i,j) \in E$
+\[Y_{ij} \sim Poisson(\mu_{ij})\]
+\[\log(\mu_{ij}) = \beta_0 + \beta_1  \log(d_{ij}+10) + \beta_2  \log(S_{i}) + \beta_3  \log(T_{j})\]
+where $S_{i}$ is out-degree of node $i$ and $T_{j}$ is in-degree of node $j$
+\end{frame}
+
+\begin{frame}{Distance and degrees model on cropped network}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"pred2cropped"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=1\linewidth]{"beta2"}
+%	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+%\end{figure}
+\end{frame}
+
+
+\section{Flow models on clustered network}
+
+\begin{frame}{Distance model on clustered network}
+Let $E$ be the set of arcs among the clusters.\\[0.2cm]
+For any $(i,j) \in E$
+\[Y_{ij} \sim Poisson(\mu_{ij})\]
+\[\log(\mu_{ij}) = \beta_0 + \beta_1 \log(d_{ij}+10)\]
+where $d_{ij}$ is the distance between the baricenters of the clusters computed using latitude and longitude
+\end{frame} 
+
+\begin{frame}{Distance model on clustered network}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"pred1"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.4\linewidth]{"beta1"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Distance and degrees model on clustered network}
+Let $E$ be the set of arcs among the clusters.\\[0.2cm]
+For any $(i,j) \in E$
+\[Y_{ij} \sim Poisson(\mu_{ij})\]
+\[\log(\mu_{ij}) = \beta_0 + \beta_1 \log(d_{ij}+10) + \beta_2 \log(S_{i}) + \beta_3 \log(T_{j})\]
+where $S_{i}$ is out-degree of node $i$ and $T_{j}$ is in-degree of node $j$
+\end{frame}
+
+\begin{frame}{Distance and degrees model on clustered network}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"pred2"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"beta2"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Distance, degrees and accessibility model on clustered network}
+Let $E$ be the set of arcs among the clusters.\\[0.2cm]
+For any $(i,j) \in E$
+\[Y_{ij} \sim Poisson(\mu_{ij})\]
+\[\log(\mu_{ij}) = \beta_0 + \beta_1 \log(d_{ij}+10) + \beta_2 \log(S_{i}) + \beta_3 \log(T_{j}) + \beta_4 \log(A_{ij}???)\]
+where $A$ is the accessibility matrix of elements $A_{ij}=formula!!!$
+\end{frame}
+
+\begin{frame}{Distance, degrees and accessibility model on clustered network}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"pred3"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{"beta3"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Distance, degrees and center-periphery model on clustered network}
+Let $E$ be the set of arcs among the clusters.\\[0.2cm]
+For any $(i,j) \in E$
+\[Y_{ij} \sim Poisson(\mu_{ij})\]
+\[\log(\mu_{ij}) = \beta_0 + \beta_1 \log(d_{ij}+10) + \beta_2 \log(S_{i}) + \beta_3  \log(T_{j})  \]\[+ \beta_4 \log(CC_{ij}) + \beta_5 \log(CP_{ij})  \]\[+ \beta_6 \log(PC_{ij}) + \beta_7 \log(Auto_{ij})\]
+where $CC$, $CP$, and $PC$ are boolean matrices to store if trips are from center (C) or periphery (P) to C or P, and $Auto$ is an identity matrix to store if the trip is an autoarc.\\
+
+mettiamo solo il risultato migliore : d s t cc auto oppure d s t cc cp pc auto?
+\end{frame}
+
+\begin{frame}{Distance, degrees and center-periphery model on clustered network}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"pred4"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"beta4"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Distance, degrees and center-periphery model on clustered network}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"pred5"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"beta5"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\end{frame}
+
+\section{Conclusions}
+
+\begin{frame}{Further developments}
+\begin{itemize}
+	\item mixed effects of center and periphery
+	\item inflated Poisson
+\end{itemize}
+
+\end{frame}
+\begin{frame}
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{"bikesianMibellissimo s e a modificate"}
+	\label{fig:bikesianmibellissimo-s-e-a-modificate}
+\end{figure}
+\centering Thank you
+\end{frame}
+
+\end{document}

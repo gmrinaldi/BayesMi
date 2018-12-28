@@ -1,0 +1,6 @@
+\select@language {italian}
+\select@language {italian}
+\beamer@sectionintoc {1}{Data}{2}{0}{1}
+\beamer@sectionintoc {2}{Flow models on cropped network}{6}{0}{2}
+\beamer@sectionintoc {3}{Flow models on clustered network}{9}{0}{3}
+\beamer@sectionintoc {4}{Conclusions}{18}{0}{4}
