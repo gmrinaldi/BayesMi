@@ -10,24 +10,33 @@ dbnames<-dbnames_ordered
 
 #consideriamo solo partenza
 
+library(lubridate)
+dayhour<-as.POSIXct(data$DataOraInizio, format = '%d/%m/%Y %H:%M') #qui è contenuta la data e l'ora
+#nota: ora posso usare le funzioni hour(), day(), minute()... 
+
+#consideriamo solo partenza:controllo l'ora-->mmattina-->guardo se piove nella casella morningRH
+#altrimenti controllo AfternoonRH (variabili booleane)
+
+#ci sono dei viaggi che sono stati fatti a mezzanotte\una. ignoro??
+
 for (i in 1:length(inizio_db)){
   idi<-dbnames==inizio_db[i]
   idj<-dbnames==fine_db[i]
-  if(grepl("a", as.character(Hour1[i]))){
-    if(grepl('F', as.character(MorningRH[i])))
+  ora<-hour(dayhour[i])
+  if(ora>=6 && ora<=12){ #se è mattina
+    if(MorningRH[i]==T) #se c'è il sole
       adj_sole[idi,idj]<-adj_sole[idi,idj]+1
     else{
       adj_piove[idi,idj]<-adj_piove[idi,idj]+1
     }
   }
-  else{
-    if(grepl('F', as.character(AfternoonRH[i])))
+  else{ #se è sera: dalle 13 alle 1.00
+    if(AfternoonRH[i]==T) #se c'è il sole
       adj_sole[idi,idj]<-adj_sole[idi,idj]+1
     else{
       adj_piove[idi,idj]<-adj_piove[idi,idj]+1
     }
   }
-}
 }
 
 
