@@ -1,30 +1,38 @@
-perm=TRUE
+perm=T
 if(perm==TRUE){
-chains <- rstan::extract(fit.3, permuted = TRUE)
+chains <- rstan::extract(fit.5, permuted = TRUE)
 N<-dim(chains$ypred)[1]
 ypred1_<-chains$ypred[1,]
 ypred2_<-chains$ypred[N,]
 
 ymean_<-ypred1_
+ymod_<-chains$ymod[1,]
+
 zmean_<-chains$z[1,]
 
 for (i in 2:N){
   ymean_<-ymean_+chains$ypred[i,]
   zmean_<-zmean_+chains$z[i,]
+  ymod_<-ymod_+chains$ymod[i,]
 }
 ymean_<-ymean_/N
 zmean_<-zmean_/N
+ymod_<-ymod_/N
 
 Y<-matrix(rep(0,67^2),67,67)
 ypred1<-matrix(rep(0,67^2),67,67)
 ypred2<-matrix(rep(0,67^2),67,67)
 ymean<-matrix(rep(0,67^2),67,67)
+ymod<-matrix(rep(0,67^2),67,67)
+
 
 for (i in 1:dim(full_flows)[1]){
   Y[full_flows$id_inizio[i],full_flows$id_fine[i]]<-full_flows$Flow[i]
   ypred1[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ypred1_[i]
   ypred2[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ypred2_[i]
   ymean[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ymean_[i]
+  ymod[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ymod_[i]
+  
 }
 
 } else{
@@ -80,11 +88,11 @@ mean(colMeans(ymean))
 x11(width=100,height=30)
 par(mfrow=c(1,4))
 image(as.matrix(log(Y+1)), main='Observed flow',col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201) )
-image(as.matrix(log(ypred1+1)), main='Predicted flow 1', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201)) 
-image(as.matrix(log(ypred2+1)), main='Predicted flow 2', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201))
+image(as.matrix(log(round(abs(ymod-ymean))+1)), main='Difference', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201)) 
+image(as.matrix(log(round(ymod)+1)), main='Modified', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201))
 image(as.matrix(log(round(ymean)+1)), main='Predicted mean', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201) )
 
-clustered_flows<-full_flows%>%mutate(cluster=round(zmean_), prediction=ymean_)
+# clustered_flows<-full_flows%>%mutate(cluster=round(zmean_), prediction=ymean_)
+modified_flows<-full_flows%>%mutate(prediction=round(ymean_),modified=round(ymod_),relchange=abs(ymean_-ymod_)/(ymean_),segno=2-sign(ymean_-ymod_))
 
-
-
+                                    
