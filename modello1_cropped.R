@@ -36,6 +36,7 @@ print(fit.1)
 traceplot(fit.1,par=c("beta0","beta1"))
 plot(fit.1,par=c("beta0","beta1"))
 stan_hist(fit.1, pars=c("beta0","beta1"),bins=50)
+stan_ac(fit.1,par=c("beta0","beta1"))
 
 
 
