@@ -21,7 +21,7 @@ parameters {
   ordered[n_groups] beta0;
   vector[p] beta[n_groups];
   vector<lower=0,upper=1>[n_groups-1] lambda_;
-  real<lower=0,upper=1> theta;
+  // real<lower=0,upper=1> theta;
 
 }
 
