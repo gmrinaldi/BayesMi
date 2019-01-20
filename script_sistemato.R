@@ -107,15 +107,14 @@ Accessibility<-full_flows%>%left_join(AccessibilityFrom,by="id_inizio")%>%left_j
   left_join(MeltedDist,by=c("inizio_db"="Var1","fine_db"="Var2"))%>%rename(Distance=value)
 
 # Se volete provare un modello con una sola covariata basta modificare select(LogAccToFrom,LogDist)
-# lasciandone una sola (e poi ricordarsi che stan a quel punto vuole un vettore, quindi sotto ci vuole X=covariates$LogDist
-# per esempio)
+# lasciandone una sola 
 
 covariates<-Accessibility%>%mutate(LogDist=log(Distance+10),LogAccToFrom=log(AccessibilityTo)+log(AccessibilityFrom))%>%
   select(LogAccToFrom,LogDist)
 
 # Qui ci vogliono sicuramente un po' di prove con mu, alpha e n_groups!
-dat <- list(y=full_flows$Flow, X=covariates, n_groups=4, p=dim(covariates)[2], M=M,
-            sigma=1.5,mu=c(7,10,12.5,15),alpha=c(.80,.15,.04,.01))
+dat <- list(y=full_flows$Flow, X=covariates, n_groups=2, p=dim(covariates)[2], M=M,
+            sigma=2,mu=c(12,15),alpha=c(.85,.15))
 
 options(mc.cores = parallel::detectCores())
 
@@ -128,7 +127,7 @@ stan_hist(fit.mixture2, pars=c("beta0","lambda","beta"),bins=50)
 
 # Per visualizzare (se dal traceplot non si vede un solo grosso baco
 # mettete perm=F)
-visualizzazione_mixture(fit.mixture2,perm=T)
+visualizzazione_mixture(fit.mixture2,perm=F)
 
 
 
