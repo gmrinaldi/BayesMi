@@ -14,14 +14,16 @@ visualizzazione_mixture <- function(myfit,perm) {
     }
     ymean_<-ymean_/N
     zmean_<-zmean_/N
-
-    Y<-matrix(rep(0,67^2),67,67)
-    ypred1<-matrix(rep(0,67^2),67,67)
-    ypred2<-matrix(rep(0,67^2),67,67)
-    ymean<-matrix(rep(0,67^2),67,67)
+    
+    M<-sqrt(length(ymean_))
+    
+    Y<-matrix(rep(0,M^2),M,M)
+    ypred1<-matrix(rep(0,M^2),M,M)
+    ypred2<-matrix(rep(0,M^2),M,M)
+    ymean<-matrix(rep(0,M^2),M,M)
 
     
-    for (i in 1:dim(full_flows)[1]){
+    for (i in 1:M^2){
       Y[full_flows$id_inizio[i],full_flows$id_fine[i]]<-full_flows$Flow[i]
       ypred1[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ypred1_[i]
       ypred2[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ypred2_[i]
@@ -53,11 +55,12 @@ visualizzazione_mixture <- function(myfit,perm) {
     ymean_<-ymean_/N
     zmean_<-zmean_/N
     
+    M<-sqrt(length(ymean_))
     
-    ypred1<-matrix(rep(0,67^2),67,67)
-    ypred2<-matrix(rep(0,67^2),67,67)
-    ymean<-matrix(rep(0,67^2),67,67)
-    Y<-matrix(rep(0,67^2),67,67)
+    ypred1<-matrix(rep(0,M^2),M,M)
+    ypred2<-matrix(rep(0,M^2),M,M)
+    ymean<-matrix(rep(0,M^2),M,M)
+    Y<-matrix(rep(0,M^2),M,M)
     
     
     for (i in 1:dim(full_flows)[1]){

@@ -19,11 +19,13 @@ if(perm==TRUE){
   zmean_<-zmean_/N
   ymod_<-ymod_/N
   
-  Y<-matrix(rep(0,67^2),67,67)
-  ypred1<-matrix(rep(0,67^2),67,67)
-  ypred2<-matrix(rep(0,67^2),67,67)
-  ymean<-matrix(rep(0,67^2),67,67)
-  ymod<-matrix(rep(0,67^2),67,67)
+  M<-sqrt(length(ymean_))
+  
+  Y<-matrix(rep(0,M^2),M,M)
+  ypred1<-matrix(rep(0,M^2),M,M)
+  ypred2<-matrix(rep(0,M^2),M,M)
+  ymean<-matrix(rep(0,M^2),M,M)
+  ymod<-matrix(rep(0,M^2),M,M)
   
   
   for (i in 1:dim(full_flows)[1]){
@@ -41,32 +43,27 @@ if(perm==TRUE){
   ind_beg<-which(dimnames(chains)$parameters=="ypred[1]")
   ind_end<-which(dimnames(chains)$parameters=="ypred[4489]")
   
-  ind_begz<-which(dimnames(chains)$parameters=="z[1]")
-  ind_endz<-which(dimnames(chains)$parameters=="z[4489]")
-  
   ypred1_<-chains[500,1,ind_beg:ind_end]
   ypred2_<-chains[500,4,ind_beg:ind_end]
   
   ymean_<-rep(0, length(ypred1_))
-  zmean_<-rep(0, length(ypred1_))
-  
+
   for (i in 1:dim(chains)[2]){
     for (j in 1:dim(chains)[1]){
       ymean_<-ymean_+chains[j,i,ind_beg:ind_end]
-      zmean_<-zmean_+chains[j,i,ind_begz:ind_endz]
     }
   }
   ymean_<-ymean_/N
-  zmean_<-zmean_/N
+
+  M<-sqrt(length(ymean_))
+  
+  ypred1<-matrix(rep(0,M^2),M,M)
+  ypred2<-matrix(rep(0,M^2),M,M)
+  ymean<-matrix(rep(0,M^2),M,M)
+  Y<-matrix(rep(0,M^2),M,M)
   
   
-  ypred1<-matrix(rep(0,67^2),67,67)
-  ypred2<-matrix(rep(0,67^2),67,67)
-  ymean<-matrix(rep(0,67^2),67,67)
-  Y<-matrix(rep(0,67^2),67,67)
-  
-  
-  for (i in 1:dim(full_flows)[1]){
+  for (i in 1:M^2){
     ypred1[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ypred1_[i]
     ypred2[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ypred2_[i]
     ymean[full_flows$id_inizio[i],full_flows$id_fine[i]]<-ymean_[i]

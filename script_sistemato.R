@@ -65,6 +65,7 @@ stan_hist(fit.removed, pars=c("beta"),bins=50)
 
 # Per costruire heatmap e visualizzare usate questa funzione (se volete
 # potete modificarla, si basa sul solito script visualizzazione)
+# Nota: qua lasciate sempre perm=T
 source("esperimento/visualizzazione_removed_function.R")
 modified_flows<-visualizzazione_removed(fit.removed,perm=T)
 # Per produrre un file da usare in gephi
@@ -119,17 +120,50 @@ dat <- list(y=full_flows$Flow, X=covariates, n_groups=2, p=dim(covariates)[2], M
 options(mc.cores = parallel::detectCores())
 
 # Nota: questo al momento non è zero inflated!
-fit.mixture2 <- stan(file = 'esperimento/esperimento10.stan',data = dat, iter=4000, save_warmup=T)
+fit.mixture2 <- stan(file = 'esperimento/esperimento10.stan', pars=c("beta0","lambda","beta"), data = dat, iter=800, save_warmup=T)
 
-traceplot(fit.mixture2,par=c("beta0","lambda","beta"))
+traceplot(fit.mixture2,par=c("beta0","lambda","beta"),inc_warmup=T)
 plot(fit.mixture2,par=c("beta0","lambda","beta"))
 stan_hist(fit.mixture2, pars=c("beta0","lambda","beta"),bins=50)
 
 # Per visualizzare (se dal traceplot non si vede un solo grosso baco
 # mettete perm=F)
+source("esperimento/visualizzazione_mixture_function.R")
 visualizzazione_mixture(fit.mixture2,perm=F)
 
+# Per provare a fittare un modello con beta0-k + beta1*ST
+AccessibilityFrom<-full_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
+  mutate(AccessibilityFrom=Sourcity/sum(Sourcity))
+AccessibilityTo<-full_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
+  mutate(AccessibilityTo=Targettosity/sum(Targettosity))
 
+Accessibility<-full_flows%>%left_join(AccessibilityFrom,by="id_inizio")%>%left_join(AccessibilityTo,by="id_fine")%>%
+  left_join(MeltedDist,by=c("inizio_db"="Var1","fine_db"="Var2"))%>%rename(Distance=value)
+
+covariates<-Accessibility%>%mutate(LogDist=log(Distance+10),LogAccToFrom=log(AccessibilityTo)+log(AccessibilityFrom))%>%
+  select(LogAccToFrom,LogDist)
+
+
+# Qui ci vogliono sicuramente un po' di prove con mu, alpha e n_groups!
+dat <- list(y=full_flows$Flow, X=covariates$LogAccToFrom, n_groups=2, M=M,
+            sigma=2,mu=c(12,15),alpha=c(.85,.15))
+
+options(mc.cores = parallel::detectCores())
+
+# Nota: questo al momento non è zero inflated!
+# Nota: sono utili prove con poche iterazioni, anche per stimare il numero di iterazioni
+# necessario (ma soprattutto per vedere cosa succede senza dover aspettare ore)
+
+fit.mixture3 <- stan(file = 'esperimento/esperimento14.stan', pars=c("beta0","lambda","betaST"), data = dat, iter=800, save_warmup=T)
+
+traceplot(fit.mixture3,par=c("beta0","lambda","betaST"),inc_warmup=T)
+plot(fit.mixture3,par=c("beta0","lambda","betaST"))
+stan_hist(fit.mixture3, pars=c("beta0","lambda","betaST"),bins=50)
+
+# Per visualizzare (se dal traceplot non si vede un solo grosso baco
+# mettete perm=F)
+source("esperimento/visualizzazione_mixture_function.R")
+visualizzazione_mixture(fit.mixture3,perm=F)
 
 
 
