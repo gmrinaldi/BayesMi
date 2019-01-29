@@ -56,46 +56,46 @@ model {
     lambda_[k] ~ beta(sum(alpha[k+1:n_groups]),alpha[k]);
 }
 
-// generated quantities {
-//   int zero;
-//   // real prob_zero;
-//   // real prob_uno;
-//   int<lower=0,upper=n_groups> z[M];
-//   vector[n_groups] prob_z;
-//   int<lower=0> ypred[M];// predictions at imputed m[i]'s
-//   // int<lower=0> ymod[M];
-//   
-//   for (i in 1:M){
-//     for (k in 1:n_groups){
-//       prob_z[k] = poisson_log_lpmf(y[i] | beta0[k]+X[i,:]*beta[k])+log(lambda[k]);
-//     }
-//     // if(y[i]==0){
-//     //   prob_zero = log_sum_exp(prob_z)+bernoulli_lpmf(0 | theta);
-//     //   prob_uno = bernoulli_lpmf(1 | theta);
-//     //   zero = bernoulli_rng(exp(prob_uno)/(exp(prob_uno)+exp(prob_zero)));
-//     // }
-//     // else zero=0;
-//     
-//     // if(zero==0){
-//       z[i] = categorical_rng(softmax(prob_z));
-//       ypred[i] = poisson_log_rng(beta0[z[i]]+X[i,:]*beta[z[i]]);
-//     // } else {z[i]=0; ypred[i]=0;}
-//   }
-//   
-//   //   for (i in 1:M){
-//   //     for (k in 1:n_groups)
-//   //       prob_z[k] = poisson_log_lpmf(y[i] | beta0[k]+NEW[i,:]*beta[k])+log(lambda[k]);
-//   //   if(y[i]==0){
-//   //     prob_zero = log_sum_exp(prob_z)+bernoulli_lpmf(0 | theta);
-//   //     prob_uno = bernoulli_lpmf(1 | theta);
-//   //     zero = bernoulli_rng(exp(prob_uno)/(exp(prob_uno)+exp(prob_zero)));
-//   //   }
-//   //   else zero=0;
-//   //   
-//   //   if(zero==0){
-//   //     z[i] = categorical_rng(softmax(prob_z));
-//   //     ypred[i] = poisson_log_rng(beta0[z[i]]+NEW[i,:]*beta[z[i]]);
-//   //   } else {z[i]=0; ypred[i]=0;}
-//   // }
-// 
-// }
+generated quantities {
+  int zero;
+  // real prob_zero;
+  // real prob_uno;
+  int<lower=0,upper=n_groups> z[M];
+  vector[n_groups] prob_z;
+  int<lower=0> ypred[M];// predictions at imputed m[i]'s
+  // int<lower=0> ymod[M];
+
+  for (i in 1:M){
+    for (k in 1:n_groups){
+      prob_z[k] = poisson_log_lpmf(y[i] | beta0[k]+X[i]*betaST)+log(lambda[k]);
+    }
+    // if(y[i]==0){
+    //   prob_zero = log_sum_exp(prob_z)+bernoulli_lpmf(0 | theta);
+    //   prob_uno = bernoulli_lpmf(1 | theta);
+    //   zero = bernoulli_rng(exp(prob_uno)/(exp(prob_uno)+exp(prob_zero)));
+    // }
+    // else zero=0;
+
+    // if(zero==0){
+      z[i] = categorical_rng(softmax(prob_z));
+      ypred[i] = poisson_log_rng(beta0[z[i]]+X[i]*betaST);
+    // } else {z[i]=0; ypred[i]=0;}
+  }
+
+  //   for (i in 1:M){
+  //     for (k in 1:n_groups)
+  //       prob_z[k] = poisson_log_lpmf(y[i] | beta0[k]+NEW[i,:]*beta[k])+log(lambda[k]);
+  //   if(y[i]==0){
+  //     prob_zero = log_sum_exp(prob_z)+bernoulli_lpmf(0 | theta);
+  //     prob_uno = bernoulli_lpmf(1 | theta);
+  //     zero = bernoulli_rng(exp(prob_uno)/(exp(prob_uno)+exp(prob_zero)));
+  //   }
+  //   else zero=0;
+  //
+  //   if(zero==0){
+  //     z[i] = categorical_rng(softmax(prob_z));
+  //     ypred[i] = poisson_log_rng(beta0[z[i]]+NEW[i,:]*beta[z[i]]);
+  //   } else {z[i]=0; ypred[i]=0;}
+  // }
+
+}
