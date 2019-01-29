@@ -58,11 +58,12 @@ model {
 
 generated quantities {
   int zero;
+  real pred_lambda;
   // real prob_zero;
   // real prob_uno;
   int<lower=0,upper=n_groups> z[M];
   vector[n_groups] prob_z;
-  int<lower=0> ypred[M];// predictions at imputed m[i]'s
+  vector<lower=0>[M] ypred;// predictions at imputed m[i]'s
   // int<lower=0> ymod[M];
 
   for (i in 1:M){
@@ -78,7 +79,11 @@ generated quantities {
 
     // if(zero==0){
       z[i] = categorical_rng(softmax(prob_z));
-      ypred[i] = poisson_log_rng(beta0[z[i]]+X[i]*betaST);
+      pred_lambda = beta0[z[i]]+X[i]*betaST;
+      
+      if (pred_lambda>20)
+        ypred[i] = round(normal_rng(exp(pred_lambda),exp(pred_lambda/2)));
+      else ypred[i]= poisson_log_rng(pred_lambda);
     // } else {z[i]=0; ypred[i]=0;}
   }
 

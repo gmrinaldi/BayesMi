@@ -145,8 +145,8 @@ covariates<-Accessibility%>%mutate(LogDist=log(Distance+10),LogAccToFrom=log(Acc
 
 
 # Qui ci vogliono sicuramente un po' di prove con mu, alpha e n_groups!
-dat <- list(y=full_flows$Flow, X=covariates$LogAccToFrom, n_groups=2, M=M,
-            sigma=2,mu=c(12,15),alpha=c(.85,.15))
+dat <- list(y=full_flows$Flow, X=covariates$LogAccToFrom, n_groups=4, M=M,
+            sigma=1.5,mu=c(8,10,11.5,13),alpha=c(2,2,2,2))
 
 options(mc.cores = parallel::detectCores())
 
@@ -154,16 +154,17 @@ options(mc.cores = parallel::detectCores())
 # Nota: sono utili prove con poche iterazioni, anche per stimare il numero di iterazioni
 # necessario (ma soprattutto per vedere cosa succede senza dover aspettare ore)
 
-fit.mixture3 <- stan(file = 'esperimento/esperimento14.stan', pars=c("beta0","lambda","betaST"), data = dat, iter=800, save_warmup=T)
+fit.mixture3 <- stan(file = 'esperimento/esperimento14.stan', pars=c("ypred","beta0","lambda","betaST"), data = dat, 
+                     iter=2000, save_warmup=F,control=list(max_treedepth=12))
 
-traceplot(fit.mixture3,par=c("beta0","lambda","betaST"),inc_warmup=T)
+traceplot(fit.mixture3,par=c("beta0","lambda","betaST"),inc_warmup=F)
 plot(fit.mixture3,par=c("beta0","lambda","betaST"))
 stan_hist(fit.mixture3, pars=c("beta0","lambda","betaST"),bins=50)
 
 # Per visualizzare (se dal traceplot non si vede un solo grosso baco
 # mettete perm=F)
 source("esperimento/visualizzazione_mixture_function.R")
-visualizzazione_mixture(fit.mixture3,perm=F)
+visualizzazione_mixture(fit.mixture3,perm=T)
 
 
 
