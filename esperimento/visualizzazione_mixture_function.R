@@ -71,12 +71,19 @@ visualizzazione_mixture <- function(myfit,perm) {
     }
   }
   
-  range(Y)
-  range(ypred1)
-  range(ypred2)
-  range(ymean)
-  mean(colMeans(Y))
-  mean(colMeans(ymean))
+  print(range(Y))
+  print(range(ypred1))
+  print(range(ypred2))
+  print(range(ymean))
+  print(mean(colMeans(Y)))
+  print(mean(colMeans(ymean)))
+  print(quantile(Y,seq(0,1,by=.1)))
+  print(quantile(ymean,seq(0,1,by=.1)))
+  
+  x11()
+  par(mfrow=c(2,1))
+  Yloghist<-hist(log(Y+1))
+  hist(log(ymean+1),breaks=Yloghist$breaks)
   
   x11(width=100,height=30)
   par(mfrow=c(1,4))

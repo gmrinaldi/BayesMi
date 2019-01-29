@@ -30,7 +30,7 @@ MeltedDist<-melt(as.matrix(d))
 
 M<-67^2;
 
-# Per eliminare i nodi:
+##### Per eliminare i nodi: #####
 
 AccessibilityFrom<-full_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
   mutate(AccessibilityFrom=Sourcity/sum(Sourcity))
@@ -75,11 +75,11 @@ modified_flows<-visualizzazione_removed(fit.removed,perm=T)
 # source("esperimento/esporta_removed_function.R")
 # esporta_removed(modified_flows)
 
-# Per il modello mistura 
+#### Per il modello mistura ####
 
 # Solo intercetta: mu è il vettore delle medie dei beta0, sigma la varianza 
 # uguale per tutti, alpha è il vettore dei parametri della prior sui pesi
-# della mistura (i lambda), quindi lambda~dirichlet(alpha)
+# della mistura (i lambda), quindi lambda~dirichlet(alpha) ####
 dat <- list(y=full_flows$Flow, n_groups=4, M=M,sigma=1.5,mu=c(0,3,5.5,8),alpha=c(.80,.15,.04,.01))
 
 options(mc.cores = parallel::detectCores())
@@ -98,7 +98,7 @@ stan_hist(fit.mixture1, pars=c("beta0","lambda"),bins=50)
 source("esperimento/visualizzazione_mixture_function.R")
 visualizzazione_mixture(fit.mixture1,perm=T)
 
-# Intercetta e covariate (distanza e/o S*T)
+# Intercetta e covariate (distanza e/o S*T) ####
 AccessibilityFrom<-full_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
   mutate(AccessibilityFrom=Sourcity/sum(Sourcity))
 AccessibilityTo<-full_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
@@ -131,7 +131,7 @@ stan_hist(fit.mixture2, pars=c("beta0","lambda","beta"),bins=50)
 source("esperimento/visualizzazione_mixture_function.R")
 visualizzazione_mixture(fit.mixture2,perm=F)
 
-# Per provare a fittare un modello con beta0-k + beta1*ST
+# Per provare a fittare un modello con beta0-k + beta1*ST ####
 AccessibilityFrom<-full_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
   mutate(AccessibilityFrom=Sourcity/sum(Sourcity))
 AccessibilityTo<-full_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
@@ -145,8 +145,8 @@ covariates<-Accessibility%>%mutate(LogDist=log(Distance+10),LogAccToFrom=log(Acc
 
 
 # Qui ci vogliono sicuramente un po' di prove con mu, alpha e n_groups!
-dat <- list(y=full_flows$Flow, X=covariates$LogAccToFrom, n_groups=4, M=M,
-            sigma=1.5,mu=c(8,10,11.5,13),alpha=c(2,2,2,2))
+dat <- list(y=full_flows$Flow, X=covariates$LogAccToFrom, n_groups=5, M=M,
+            sigma=1.5,mu=c(8,10,11.5,13,15),alpha=c(2,2,2,2,2))
 
 options(mc.cores = parallel::detectCores())
 
@@ -165,6 +165,43 @@ stan_hist(fit.mixture3, pars=c("beta0","lambda","betaST"),bins=50)
 # mettete perm=F)
 source("esperimento/visualizzazione_mixture_function.R")
 visualizzazione_mixture(fit.mixture3,perm=T)
+
+# Per provare a fittare un modello con beta0-k + beta1*ST + beta2-k*dist ####
+AccessibilityFrom<-full_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
+  mutate(AccessibilityFrom=Sourcity/sum(Sourcity))
+AccessibilityTo<-full_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
+  mutate(AccessibilityTo=Targettosity/sum(Targettosity))
+
+Accessibility<-full_flows%>%left_join(AccessibilityFrom,by="id_inizio")%>%left_join(AccessibilityTo,by="id_fine")%>%
+  left_join(MeltedDist,by=c("inizio_db"="Var1","fine_db"="Var2"))%>%rename(Distance=value)
+
+covariates<-Accessibility%>%mutate(LogDist=log(Distance+10),LogAccToFrom=log(AccessibilityTo)+log(AccessibilityFrom))%>%
+  select(LogAccToFrom,LogDist)
+
+
+# Qui ci vogliono sicuramente un po' di prove con mu, alpha e n_groups!
+dat <- list(y=full_flows$Flow, X=covariates, n_groups=5, M=M, p=dim(covariates)[2],
+            sigma=1.5,mu=c(8,10,11.5,13,15),alpha=c(2,2,2,2,2))
+
+options(mc.cores = parallel::detectCores())
+
+# Nota: questo al momento non è zero inflated!
+# Nota: sono utili prove con poche iterazioni, anche per stimare il numero di iterazioni
+# necessario (ma soprattutto per vedere cosa succede senza dover aspettare ore)
+
+fit.mixture4 <- stan(file = 'esperimento/esperimento13.stan', pars=c("ypred","beta0","lambda","betaST","betaDist"), data = dat, 
+                     iter=2000, save_warmup=F,control=list(max_treedepth=12))
+
+traceplot(fit.mixture4,par=c("beta0","lambda","betaST","betaDist"),inc_warmup=F)
+plot(fit.mixture4,par=c("beta0","lambda","betaST","betaDist"))
+stan_hist(fit.mixture4, pars=c("beta0","lambda","betaST","betaDist"),bins=50)
+
+# Per visualizzare (se dal traceplot non si vede un solo grosso baco
+# mettete perm=F)
+source("esperimento/visualizzazione_mixture_function.R")
+visualizzazione_mixture(fit.mixture4,perm=T)
+
+
 
 
 
