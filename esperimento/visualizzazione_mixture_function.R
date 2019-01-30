@@ -88,9 +88,9 @@ visualizzazione_mixture <- function(myfit,perm) {
   x11(width=100,height=30)
   par(mfrow=c(1,4))
   image(as.matrix(log(Y+1)), main='Observed flow',col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201) )
-  image(as.matrix(log(round(ypred1)+1)), main='Estimated 1', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201)) 
-  image(as.matrix(log(round(ypred2)+1)), main='Estimated 2', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201))
-  image(as.matrix(log(round(ymean)+1)), main='Estimated mean', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201))
+  image(as.matrix(log(round(ypred1)+1)), main='Predicted flow 1', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201)) 
+  image(as.matrix(log(round(ypred2)+1)), main='Predicted flow 2', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201))
+  image(as.matrix(log(round(ymean)+1)), main='Predicted mean', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201))
   
   # clustered_flows<-full_flows%>%mutate(cluster=round(zmean_), prediction=ymean_)
 }
