@@ -37,3 +37,31 @@ generated quantities {
   for (i in 1:M)
     ymod[i] = (temp[i]<1000 && temp[i]>-1000) ? poisson_log_rng(temp[i]) : 0;
 }
+
+
+
+
+
+//   vector<lower=0>[M] ypred;// predictions at imputed m[i]'s
+//   vector<lower=0>[M] ymod;// predictions at imputed m[i]'s
+//   vector[M] temp;
+//   
+//   temp=X*beta;
+//   
+//   for (i in 1:M){
+//     if (temp[i]>20)
+//       ypred[i] = round(normal_rng(exp(temp[i]),exp(temp[i]/2)));
+//     else ypred[i]= poisson_log_rng(temp[i]);
+//   }
+// 
+//   temp=NEW*beta;
+//   for (i in 1:M){
+//     if (temp[i]< -1000 && temp[i]>1000)
+//      ymod[i]=0;
+//     else if (temp[i]>20)
+//       ymod[i] = round(normal_rng(exp(temp[i]),exp(temp[i]/2)));
+//           else ymod[i]= poisson_log_rng(temp[i]);
+//   }
+// }
+// 
+// 

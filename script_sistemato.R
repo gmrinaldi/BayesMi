@@ -202,6 +202,68 @@ source("esperimento/visualizzazione_mixture_function.R")
 visualizzazione_mixture(fit.mixture4,perm=T)
 
 
+# Per provare a fittare un modello ZERO INFLATED con beta0-k  ####
+
+# Solo intercetta: mu è il vettore delle medie dei beta0, sigma la varianza 
+# uguale per tutti, alpha è il vettore dei parametri della prior sui pesi
+# della mistura (i lambda), quindi lambda~dirichlet(alpha) ####
+dat <- list(y=full_flows$Flow, n_groups=4, M=M,sigma=1.5,mu=c(0,3,5.5,8),alpha=c(.80,.15,.04,.01))
+
+options(mc.cores = parallel::detectCores())
+
+fit.mixture5 <- stan(file = 'esperimento/esperimento15.stan',data = dat, iter=4000, save_warmup=T)
+
+traceplot(fit.mixture5,par=c("beta0","lambda","theta"))
+plot(fit.mixture5,par=c("beta0"))
+plot(fit.mixture5,par=c("lambda"))
+# Provate a vedere se l'istogramma resta nel range della prior o sta cercando
+# di spingersi più al limite dei mu+4*sigma
+stan_hist(fit.mixture5, pars=c("beta0","lambda","theta"),bins=50)
+
+# Per visualizzare (se dal traceplot non si vede un solo grosso baco
+# mettete perm=F)
+source("esperimento/visualizzazione_mixture_function.R")
+visualizzazione_mixture(fit.mixture5,perm=T)
+
+
+# Per provare a fittare un modello ZERO INFLATED con beta0-k + beta1*ST ####
+AccessibilityFrom<-full_flows%>%group_by(id_inizio)%>%summarize(Sourcity=sum(Flow))%>%ungroup()%>%
+  mutate(AccessibilityFrom=Sourcity/sum(Sourcity))
+AccessibilityTo<-full_flows%>%group_by(id_fine)%>%summarize(Targettosity=sum(Flow))%>%ungroup()%>%
+  mutate(AccessibilityTo=Targettosity/sum(Targettosity))
+
+Accessibility<-full_flows%>%left_join(AccessibilityFrom,by="id_inizio")%>%left_join(AccessibilityTo,by="id_fine")%>%
+  left_join(MeltedDist,by=c("inizio_db"="Var1","fine_db"="Var2"))%>%rename(Distance=value)
+
+covariates<-Accessibility%>%mutate(LogDist=log(Distance+10),LogAccToFrom=log(AccessibilityTo)+log(AccessibilityFrom))%>%
+  select(LogAccToFrom,LogDist)
+
+
+# Qui ci vogliono sicuramente un po' di prove con mu, alpha e n_groups!
+dat <- list(y=full_flows$Flow, X=covariates$LogAccToFrom, n_groups=5, M=M,
+            sigma=1.5,mu=c(8,10,11.5,13,15),alpha=c(2,2,2,2,2))
+
+options(mc.cores = parallel::detectCores())
+
+# Nota: sono utili prove con poche iterazioni, anche per stimare il numero di iterazioni
+# necessario (ma soprattutto per vedere cosa succede senza dover aspettare ore)
+
+fit.mixture6 <- stan(file = 'esperimento/esperimento16.stan', pars=c("ypred","beta0","lambda","betaST","theta"), data = dat, 
+                     iter=2000, save_warmup=F,control=list(max_treedepth=12))
+
+traceplot(fit.mixture6,par=c("beta0","lambda","betaST","theta"),inc_warmup=F)
+plot(fit.mixture6,par=c("beta0","lambda","betaST","theta"))
+stan_hist(fit.mixture6, pars=c("beta0","lambda","betaST","theta"),bins=50)
+
+# Per visualizzare (se dal traceplot non si vede un solo grosso baco
+# mettete perm=F)
+source("esperimento/visualizzazione_mixture_function.R")
+visualizzazione_mixture(fit.mixture6,perm=T)
+
+
+
+
+
 
 
 

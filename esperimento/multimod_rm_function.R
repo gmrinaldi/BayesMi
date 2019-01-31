@@ -7,11 +7,19 @@ multimod_rm <- function(DF, id_names, d, alphaF, alphaT) {
   for (i in 1:length(id_names)){
     fromname<-paste("NewFromPart",i,sep="")
     toname<-paste("NewToPart",i,sep="")
-    scale_factor_from<-(dim(NewFrom)[1]-1)/(sum(exp(-as.numeric(d[id_names[i],])/alphaF))-1)
-    scale_factor_to<-(dim(NewFrom)[1]-1)/(sum(exp(-as.numeric(d[id_names[i],])/alphaT))-1)
-    
+    # scale_factor_from<-(dim(NewFrom)[1]-1)/(sum(exp(-as.numeric(d[id_names[i],])/alphaF))-1)
+    # scale_factor_to<-(dim(NewFrom)[1]-1)/(sum(exp(-as.numeric(d[id_names[i],])/alphaT))-1)
+    # 
+    # NewFrom<-NewFrom%>%mutate(!!fromname := (sum(Sourcity)/sum(Sourcity*(id_inizio!=id_names[i]))-1)*scale_factor_from*exp(-as.numeric(d[id_names[i],])/alphaF))
+    # NewTo<-NewTo%>%mutate(!!toname := (sum(Targettosity)/sum(Targettosity*(id_fine!=id_names[i]))-1)*scale_factor_to*exp(-as.numeric(d[id_names[i],])/alphaT))
+
+    scale_factor_from<-NewFrom%>%summarize(scale=sum(Sourcity*(id_inizio!=id_names[i]))/sum((Sourcity*(id_inizio!=id_names[i])*exp(-as.numeric(d[id_names[i],])/alphaF))))%>%.$scale
+    scale_factor_to<-NewTo%>%summarize(scale=sum(Targettosity*(id_fine!=id_names[i]))/sum((Targettosity*(id_fine!=id_names[i])*exp(-as.numeric(d[id_names[i],])/alphaF))))%>%.$scale
+
     NewFrom<-NewFrom%>%mutate(!!fromname := (sum(Sourcity)/sum(Sourcity*(id_inizio!=id_names[i]))-1)*scale_factor_from*exp(-as.numeric(d[id_names[i],])/alphaF))
     NewTo<-NewTo%>%mutate(!!toname := (sum(Targettosity)/sum(Targettosity*(id_fine!=id_names[i]))-1)*scale_factor_to*exp(-as.numeric(d[id_names[i],])/alphaT))
+    
+    
   }
   
   NewFrom<-NewFrom%>%mutate(NewSource=Sourcity*(!(id_inizio%in%id_names)),
