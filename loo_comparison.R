@@ -25,6 +25,7 @@ rm(chains2)
 
 loo::compare(loo1, loo2)  # use loo::compare(loo1, loo2) if not using rstanarm
 
+##in caso non cancellare chains
 waic1 <- waic(chains1$ypred)
 waic2 <- waic(chains2$ypred)
 compare(waic1, waic2)
