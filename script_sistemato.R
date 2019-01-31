@@ -84,7 +84,7 @@ dat <- list(y=full_flows$Flow, n_groups=4, M=M,sigma=1.5,mu=c(0,3,5.5,8),alpha=c
 
 options(mc.cores = parallel::detectCores())
 
-fit.mixture1 <- stan(file = 'esperimento/esperimento5.stan',data = dat, iter=4000, save_warmup=T)
+fit.mixture1 <- stan(file = 'esperimento/esperimento5.stan',data = dat, iter=1000, save_warmup=T)
 
 traceplot(fit.mixture1,par=c("beta0","lambda"))
 plot(fit.mixture1,par=c("beta0"))
@@ -120,7 +120,7 @@ dat <- list(y=full_flows$Flow, X=covariates, n_groups=2, p=dim(covariates)[2], M
 options(mc.cores = parallel::detectCores())
 
 # Nota: questo al momento non è zero inflated!
-fit.mixture2 <- stan(file = 'esperimento/esperimento10.stan', pars=c("beta0","lambda","beta"), data = dat, iter=800, save_warmup=T)
+fit.mixture2 <- stan(file = 'esperimento/esperimento10.stan', pars=c("beta0","lambda","beta","log_lik"), data = dat, iter=800, save_warmup=T)
 
 traceplot(fit.mixture2,par=c("beta0","lambda","beta"),inc_warmup=T)
 plot(fit.mixture2,par=c("beta0","lambda","beta"))
@@ -154,7 +154,7 @@ options(mc.cores = parallel::detectCores())
 # Nota: sono utili prove con poche iterazioni, anche per stimare il numero di iterazioni
 # necessario (ma soprattutto per vedere cosa succede senza dover aspettare ore)
 
-fit.mixture3 <- stan(file = 'esperimento/esperimento14.stan', pars=c("ypred","beta0","lambda","betaST"), data = dat, 
+fit.mixture3 <- stan(file = 'esperimento/esperimento14.stan', pars=c("ypred","beta0","lambda","betaST","log_lik"), data = dat, 
                      iter=2000, save_warmup=F,control=list(max_treedepth=12))
 
 traceplot(fit.mixture3,par=c("beta0","lambda","betaST"),inc_warmup=F)
@@ -189,7 +189,7 @@ options(mc.cores = parallel::detectCores())
 # Nota: sono utili prove con poche iterazioni, anche per stimare il numero di iterazioni
 # necessario (ma soprattutto per vedere cosa succede senza dover aspettare ore)
 
-fit.mixture4 <- stan(file = 'esperimento/esperimento13.stan', pars=c("ypred","beta0","lambda","betaST","betaDist"), data = dat, 
+fit.mixture4 <- stan(file = 'esperimento/esperimento13.stan', pars=c("ypred","beta0","lambda","betaST","betaDist","log_lik"), data = dat, 
                      iter=2000, save_warmup=F,control=list(max_treedepth=12))
 
 traceplot(fit.mixture4,par=c("beta0","lambda","betaST","betaDist"),inc_warmup=F)
@@ -248,7 +248,7 @@ options(mc.cores = parallel::detectCores())
 # Nota: sono utili prove con poche iterazioni, anche per stimare il numero di iterazioni
 # necessario (ma soprattutto per vedere cosa succede senza dover aspettare ore)
 
-fit.mixture6 <- stan(file = 'esperimento/esperimento16.stan', pars=c("ypred","beta0","lambda","betaST","theta"), data = dat, 
+fit.mixture6 <- stan(file = 'esperimento/esperimento16.stan', pars=c("ypred","beta0","lambda","betaST","theta","log_lik"), data = dat, 
                      iter=2000, save_warmup=F,control=list(max_treedepth=12))
 
 traceplot(fit.mixture6,par=c("beta0","lambda","betaST","theta"),inc_warmup=F)
@@ -259,10 +259,6 @@ stan_hist(fit.mixture6, pars=c("beta0","lambda","betaST","theta"),bins=50)
 # mettete perm=F)
 source("esperimento/visualizzazione_mixture_function.R")
 visualizzazione_mixture(fit.mixture6,perm=T)
-
-
-
-
 
 
 

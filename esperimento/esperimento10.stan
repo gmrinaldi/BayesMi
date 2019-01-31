@@ -60,6 +60,9 @@ model {
 }
 
 generated quantities {
+  vector[M] log_lik;
+  vector[n_groups] contributions;
+
   int zero;
   // real prob_zero;
   // real prob_uno;
@@ -67,6 +70,12 @@ generated quantities {
   vector[n_groups] prob_z;
   int<lower=0> ypred[M];// predictions at imputed m[i]'s
   // int<lower=0> ymod[M];
+  for (i in 1:M) {
+    for (k in 1:n_groups)
+      contributions[k] = log_lambda[k] + poisson_log_lpmf(y[i] | beta0[k]+X[i,:]*beta[k]);
+  log_lik[i]=log_sum_exp(contributions);
+  }
+
   
   for (i in 1:M){
     for (k in 1:n_groups){
