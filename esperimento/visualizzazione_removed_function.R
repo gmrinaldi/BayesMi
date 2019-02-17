@@ -85,5 +85,5 @@ image(as.matrix(log(round(abs(ymod-ymean))+1)), main='Difference', col = rev(hea
 image(as.matrix(log(round(ymean)+1)), main='Estimated mean', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201))
 image(as.matrix(log(round(ymod)+1)), main='Modified', col = rev(heat.colors(200)),  axes=F, breaks=seq(min(log(Y+1)),max(log(Y+1)),length.out=201))
 
-modified_flows<-full_flows%>%mutate(prediction=round(ymean_),modified=round(ymod_),relchange=abs(modified-prediction),segno=2-sign(prediction-modified))
+modified_flows<-full_flows%>%mutate(prediction=round(ymean_),modified=round(ymod_),relchange=round(abs(ymod_-ymean_)),segno=2-sign(prediction-modified))
 }
